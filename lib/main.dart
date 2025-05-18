@@ -184,9 +184,16 @@ class GeneratorPage extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
+          Expanded(
+            flex: 3,
+            child: HistoryListView(),
+          ),
+          SizedBox(height: 10),
+
           Text('A random AWESOME idea:'),
           BigCard(pair: pair),
           SizedBox(height: 10),
+
           Row(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -207,6 +214,7 @@ class GeneratorPage extends StatelessWidget {
               ),
             ],
           ),
+          Spacer(flex: 2),
         ],
       ),
     );
