@@ -288,28 +288,30 @@ class FavoritesPage extends StatelessWidget {
           child: Text('You have ${appState.favorites.length} favorites:'),
         ),
         Expanded(
-          // Make better use of wide windows with a grid.
-          child: GridView(
-            gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-              maxCrossAxisExtent: 400,
-              childAspectRatio: 400 / 80,
+          child: Scrollbar(
+            // Make better use of wide windows with a grid.
+            child: GridView(
+              gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+                maxCrossAxisExtent: 400,
+                childAspectRatio: 400 / 80,
+              ),
+              children: [
+                for (var pair in appState.favorites)
+                  ListTile(
+                    leading: IconButton(
+                      icon: Icon(Icons.delete_outline, semanticLabel: 'Delete'),
+                      color: theme.colorScheme.primary,
+                      onPressed: () {
+                        appState.removeFavorite(pair);
+                      },
+                    ),
+                    title: Text(
+                      pair.asLowerCase,
+                      semanticsLabel: pair.asPascalCase,
+                    ),
+                  ),
+              ],
             ),
-            children: [
-              for (var pair in appState.favorites)
-                ListTile(
-                  leading: IconButton(
-                    icon: Icon(Icons.delete_outline, semanticLabel: 'Delete'),
-                    color: theme.colorScheme.primary,
-                    onPressed: () {
-                      appState.removeFavorite(pair);
-                    },
-                  ),
-                  title: Text(
-                    pair.asLowerCase,
-                    semanticsLabel: pair.asPascalCase,
-                  ),
-                ),
-            ],
           ),
         ),
       ],
@@ -349,31 +351,33 @@ class _HistoryListViewState extends State<HistoryListView> {
       // This blend mode takes the opacity of the shader (i.e., our Gradient)
       // and applies it to the destination (i.e., our AnimatedList).
       blendMode: BlendMode.dstIn,
-      child: AnimatedList(
-        key: _key,
-        reverse: true,
-        padding: EdgeInsets.only(top: 100),
-        initialItemCount: appState.history.length,
-        itemBuilder: (context, index, animation) {
-          final pair = appState.history[index];
-          return SizeTransition(
-            sizeFactor: animation,
-            child: Center(
-              child: TextButton.icon(
-                onPressed: () {
-                  appState.toggleFavorite(pair);
-                },
-                icon: appState.favorites.contains(pair)
-                    ? Icon(Icons.favorite, size: 12)
-                    : SizedBox(),
-                label: Text(
-                  pair.asLowerCase,
-                  semanticsLabel: pair.asPascalCase,
+      child: Scrollbar(
+        child: AnimatedList(
+          key: _key,
+          reverse: true,
+          padding: EdgeInsets.only(top: 100),
+          initialItemCount: appState.history.length,
+          itemBuilder: (context, index, animation) {
+            final pair = appState.history[index];
+            return SizeTransition(
+              sizeFactor: animation,
+              child: Center(
+                child: TextButton.icon(
+                  onPressed: () {
+                    appState.toggleFavorite(pair);
+                  },
+                  icon: appState.favorites.contains(pair)
+                      ? Icon(Icons.favorite, size: 12)
+                      : SizedBox(),
+                  label: Text(
+                    pair.asLowerCase,
+                    semanticsLabel: pair.asPascalCase,
+                  ),
                 ),
               ),
-            ),
-          );
-        },
+            );
+          },
+        ),
       ),
     );
   }
