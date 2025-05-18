@@ -341,6 +341,40 @@ class _HistoryListViewState extends State<HistoryListView> {
 
   @override
   Widget build(BuildContext context) {
+    final appState = context.watch<MyAppState>();
+    appState.historyListKey = _key;
 
+    return ShaderMask(
+      shaderCallback: (bounds) => _maskingGradient.createShader(bounds),
+      // This blend mode takes the opacity of the shader (i.e., our Gradient)
+      // and applies it to the destination (i.e., our AnimatedList).
+      blendMode: BlendMode.dstIn,
+      child: AnimatedList(
+        key: _key,
+        reverse: true,
+        padding: EdgeInsets.only(top: 100),
+        initialItemCount: appState.history.length,
+        itemBuilder: (context, index, animation) {
+          final pair = appState.history[index];
+          return SizeTransition(
+            sizeFactor: animation,
+            child: Center(
+              child: TextButton.icon(
+                onPressed: () {
+                  appState.toggleFavorite(pair);
+                },
+                icon: appState.favorites.contains(pair)
+                    ? Icon(Icons.favorite, size: 12)
+                    : SizedBox(),
+                label: Text(
+                  pair.asLowerCase,
+                  semanticsLabel: pair.asPascalCase,
+                ),
+              ),
+            ),
+          );
+        },
+      ),
+    );
   }
 }
